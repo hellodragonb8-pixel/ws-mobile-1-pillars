@@ -1,0 +1,425 @@
+/* ------------------------------------------------------------------
+   VS Code Mobile — 3 Pillars, scroll-focus variant
+   Design: 390px mobile viewport, 4-column grid
+
+   Interaction model
+   - Normal vertical scrolling. No mandatory snap, nothing hijacked.
+   - Title, copy and link are always fully visible.
+   - The card image scales and fades to full as the card reaches the
+     center of the viewport.
+       Tier 1: CSS view() timeline (Chrome/Edge 115+, Safari 26+).
+       Tier 2: IntersectionObserver toggles .is-in-view (Firefox).
+   - prefers-reduced-motion: image always at full size, no animation.
+   - Optional proximity snap (dev toggle): a card settles centered when
+     the user stops near it. Never fights a fling, never traps content.
+------------------------------------------------------------------ */
+
+:root {
+  --bg-color: #0b0c0e;
+  --card-bg: rgba(255, 255, 255, 0.04);
+  --card-border: rgba(255, 255, 255, 0.10);
+
+  --text-primary: #f5f5f7;
+  --text-secondary: #b8bcc6;
+  --text-muted: #626773;
+  --accent-blue: #007acc;
+  --accent-blue-light: #3b99fc;
+
+  --font-family: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+
+  /* Apple small-breakpoint type ramp (<= 734px) */
+  --type-headline-size: 32px;          /* typography-headline */
+  --type-headline-lh: 1.125;
+  --type-headline-ls: 0.004em;
+  --type-headline-weight: 700;
+
+  --type-headline-reduced-size: 28px;  /* typography-headline-reduced */
+  --type-headline-reduced-lh: 1.14286;
+  --type-headline-reduced-ls: 0.007em;
+
+  --type-body-size: 17px;              /* typography-body */
+  --type-body-lh: 1.47059;
+  --type-body-ls: -0.022em;
+
+  --type-cta-size: 17px;
+
+  /* 390px grid spec */
+  --frame-width: 390px;
+  --frame-height: 844px;
+  --header-height: 56px;
+  --grid-margin: 16px;
+  --grid-gutter: 12px;
+  --grid-cols: 4;
+
+  /* Image at rest (off-center) vs in focus (centered) */
+  --media-scale-rest: 0.84;
+  --media-opacity-rest: 0.35;
+  --media-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #050506;
+  font-family: var(--font-family);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0 60px 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------------
+   Device frame = the scroll container
+------------------------------------------------------------------ */
+
+.device-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.device-frame {
+  width: var(--frame-width);
+  height: var(--frame-height);
+  background-color: var(--bg-color);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 40px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 12px #18191c;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-top: var(--header-height);
+  scrollbar-width: none;
+}
+
+.device-frame::-webkit-scrollbar {
+  display: none;
+}
+
+.device-frame:focus-visible {
+  outline: 3px solid var(--accent-blue-light);
+  outline-offset: 4px;
+}
+
+/* Optional proximity snap (off by default) */
+.device-frame.snap-on {
+  scroll-snap-type: y proximity;
+}
+
+.device-frame.snap-on .pillar-card {
+  scroll-snap-align: center;
+}
+
+/* Header */
+.mobile-header {
+  height: var(--header-height);
+  padding: 0 var(--grid-margin);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(11, 12, 14, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo__title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.menu-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.menu-toggle:focus-visible {
+  outline: 2px solid var(--accent-blue-light);
+  outline-offset: 2px;
+}
+
+.mobile-main {
+  padding: 24px 0 0 0;
+}
+
+/* Lets the last card reach the center of the viewport */
+.scroll-tail {
+  height: 200px;
+}
+
+/* ------------------------------------------------------------------
+   Pillars section
+------------------------------------------------------------------ */
+
+.pillars-section {
+  position: relative;
+  width: 100%;
+}
+
+.pillars-container {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  gap: 28px var(--grid-gutter);
+  padding: 0 var(--grid-margin);
+}
+
+.grid-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--grid-margin);
+  right: var(--grid-margin);
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  gap: var(--grid-gutter);
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.grid-overlay.is-visible {
+  opacity: 1;
+}
+
+.grid-col {
+  background: rgba(255, 0, 85, 0.08);
+  border-left: 1px dashed rgba(255, 0, 85, 0.3);
+  border-right: 1px dashed rgba(255, 0, 85, 0.3);
+}
+
+/* ------------------------------------------------------------------
+   Pillar card. Nothing here is ever hidden from assistive tech.
+------------------------------------------------------------------ */
+
+.pillar-card {
+  grid-column: span 4;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.pillar-card__media {
+  margin: 0;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #0e1013;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pillar-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.pillar-card__body {
+  padding: 22px 20px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Headline: Apple typography-headline-reduced at the small breakpoint */
+.pillar-card__title {
+  font-size: var(--type-headline-reduced-size);
+  line-height: var(--type-headline-reduced-lh);
+  letter-spacing: var(--type-headline-reduced-ls);
+  font-weight: var(--type-headline-weight);
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+
+/* Body: Apple typography-body */
+.pillar-card__subheading {
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-lh);
+  letter-spacing: var(--type-body-ls);
+  color: var(--text-secondary);
+}
+
+/* CTA: always fully visible */
+.pillar-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  font-size: var(--type-cta-size);
+  line-height: var(--type-body-lh);
+  letter-spacing: var(--type-body-ls);
+  color: var(--accent-blue-light);
+  text-decoration: none;
+  min-height: 44px;
+  margin-top: -6px;
+}
+
+.pillar-card__cta:hover {
+  text-decoration: underline;
+}
+
+.pillar-card__cta:focus-visible {
+  outline: 2px solid var(--accent-blue-light);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.pillar-card__cta svg {
+  transition: transform 0.2s ease;
+}
+
+.pillar-card__cta:hover svg {
+  transform: translateX(2px);
+}
+
+/* ------------------------------------------------------------------
+   Motion
+   html.motion-reduced is set by script.js from prefers-reduced-motion
+   (or the dev "Simulate" toggle) and cleared by the dev "Force motion"
+   override. The @media block below is the no-JS safety net.
+------------------------------------------------------------------ */
+
+/* Tier 1: scroll-driven animation on the image, off the main thread.
+   Progress spans the image's trip through the scrollport:
+   0% enters from the bottom, ~50% centered, 100% leaves at the top. */
+@supports (animation-timeline: view()) {
+  html:not(.motion-reduced) .pillar-card__media img {
+    animation: media-focus linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 100%;
+  }
+}
+
+@keyframes media-focus {
+  0%   { transform: scale(var(--media-scale-rest)); opacity: var(--media-opacity-rest); }
+  38%  { transform: scale(1); opacity: 1; }
+  62%  { transform: scale(1); opacity: 1; }
+  100% { transform: scale(var(--media-scale-rest)); opacity: var(--media-opacity-rest); }
+}
+
+/* Tier 2: IntersectionObserver toggles .is-in-view on the card */
+@supports not (animation-timeline: view()) {
+  html:not(.motion-reduced) .pillar-card__media img {
+    transform: scale(var(--media-scale-rest));
+    opacity: var(--media-opacity-rest);
+    transition: transform 0.6s var(--media-ease), opacity 0.6s var(--media-ease);
+  }
+
+  html:not(.motion-reduced) .pillar-card.is-in-view .pillar-card__media img {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Reduced motion: full-size image, no animation (WCAG 2.3.3, C39) */
+html.motion-reduced .pillar-card__media img {
+  animation: none;
+  transition: none;
+  transform: none;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.force-motion) .pillar-card__media img {
+    animation: none;
+    transition: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Developer toolbar
+------------------------------------------------------------------ */
+
+.dev-toolbar {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  max-width: 640px;
+}
+
+.dev-btn {
+  background: #1e2025;
+  border: 1px solid #333742;
+  color: #c5cbd8;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dev-btn:hover {
+  background: #2b2f38;
+  color: #fff;
+  border-color: #4a5061;
+}
+
+.dev-btn:focus-visible {
+  outline: 2px solid var(--accent-blue-light);
+  outline-offset: 2px;
+}
+
+.dev-btn[aria-pressed="true"] {
+  background: rgba(0, 122, 204, 0.2);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue-light);
+}
+
+.dev-status {
+  font-size: 12px;
+  color: var(--text-muted);
+}
