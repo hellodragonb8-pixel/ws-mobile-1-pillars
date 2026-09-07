@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VS Code Mobile — 3 Pillars (sticky card stack)</title>
+  <link rel="stylesheet" href="stack.css">
+</head>
+<body>
+  <div class="device-container">
+    <div class="device-frame snap-on" id="deviceFrame" tabindex="0" role="region" aria-label="Mobile preview, scrollable">
+
+      <header class="mobile-header">
+        <div class="logo">
+          <svg class="logo__mark" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M14.1824 19.8634C14.4974 19.9861 14.8566 19.9783 15.1745 19.8253L19.2922 17.8439C19.7248 17.6357 20 17.1978 20 16.7174V3.28266C20 2.80226 19.7249 2.36436 19.2922 2.15616L15.1745 0.174751C14.7572 -0.0260259 14.2689 0.0231519 13.9027 0.289389C13.8504 0.327422 13.8006 0.369886 13.7538 0.416682L5.87101 7.6083L2.43744 5.00193C2.11781 4.7593 1.67073 4.77918 1.37387 5.04922L0.272606 6.05098C-0.0905104 6.38129 -0.0909266 6.95255 0.271707 7.28339L3.24942 10L0.271707 12.7166C-0.0909266 13.0475 -0.0905104 13.6188 0.272606 13.9491L1.37387 14.9508C1.67073 15.2209 2.11781 15.2407 2.43744 14.9981L5.87101 12.3917L13.7538 19.5833C13.8785 19.7081 14.0249 19.8021 14.1824 19.8634ZM15.003 5.45979L9.02182 10L15.003 14.5402V5.45979Z" fill="#007ACC"/>
+          </svg>
+          <span class="logo__title">Visual Studio Code</span>
+        </div>
+        <button class="menu-toggle" aria-label="Toggle navigation menu">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M3 5H17M3 10H17M3 15H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </header>
+
+      <main class="mobile-main">
+
+        <!-- Sticky card stack. Each card sticks below the previous one's
+             header band, so earlier headers stay visible while the newest
+             card is in focus. All content stays in the DOM at all times. -->
+        <section class="scd-01" aria-labelledby="stack-heading">
+          <h1 id="stack-heading" class="visually-hidden">Core pillars</h1>
+
+          <div class="scd-01__scene" id="scene">
+
+            <article class="scd-01__card" style="--i:0" id="card-1">
+              <h2 class="scd-01__title">Decide how work<br>gets done</h2>
+              <figure class="scd-01__media">
+                <img src="assets/pillar-screenshot.png" alt="VS Code editor with the Explorer, an open TypeScript file, and the agent Sessions panel ready to start a session." loading="eager">
+              </figure>
+              <p class="scd-01__copy">
+                Use the model, harness, and subscription you already have and swap any of them when you need different speed, depth, or setup. Your sessions follow you across devices and run in the editor you already work in, so agents can work while you dive into the code.
+              </p>
+              <a class="scd-01__cta" href="#">
+                <span>Models and harnesses</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </article>
+
+            <article class="scd-01__card" style="--i:1" id="card-2">
+              <h2 class="scd-01__title">Scale what works</h2>
+              <figure class="scd-01__media">
+                <img src="assets/pillar-screenshot.png" alt="VS Code editor with the Explorer, an open TypeScript file, and the agent Sessions panel ready to start a session." loading="lazy">
+              </figure>
+              <p class="scd-01__copy">
+                You don't have to run one session or one repo at a time. Orchestrate across sessions and repos to get through your backlog faster and jump into whichever one needs your input.
+              </p>
+              <a class="scd-01__cta" href="#">
+                <span>Run agent sessions in parallel</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </article>
+
+            <article class="scd-01__card" style="--i:2" id="card-3">
+              <h2 class="scd-01__title">Build the system, not<br>the solution</h2>
+              <figure class="scd-01__media">
+                <img src="assets/pillar-screenshot.png" alt="VS Code editor with the Explorer, an open TypeScript file, and the agent Sessions panel ready to start a session." loading="lazy">
+              </figure>
+              <p class="scd-01__copy">
+                VS Code is yours to configure. Instructions, skills, custom agents, and hooks carry your team's standards into every session, while MCP servers connect agents to the systems you already use. Shape the whole development environment with extensions, languages, debuggers, and themes so it fits the way you work.
+              </p>
+              <a class="scd-01__cta" href="#">
+                <span>Customizations</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </article>
+
+          </div>
+
+          <!-- Room to read the last card, then the stack scrolls away -->
+          <div class="scd-01__end" aria-hidden="true"></div>
+        </section>
+
+      </main>
+
+    </div>
+  </div>
+
+  <!-- Developer toolbar (not part of the design) -->
+  <div class="dev-toolbar" aria-label="Prototype controls">
+    <a class="dev-btn" href="index.html">Variant A: scroll focus</a>
+    <button id="toggleSnapBtn" class="dev-btn" aria-pressed="true">Snap scrolling</button>
+    <button id="toggleMotionBtn" class="dev-btn" aria-pressed="false">Simulate reduced motion</button>
+    <button id="forceMotionBtn" class="dev-btn" aria-pressed="false" hidden>Force motion on (OS has reduce motion)</button>
+    <span id="engineStatus" class="dev-status" role="status"></span>
+  </div>
+
+  <script src="stack.js"></script>
+</body>
+</html>
