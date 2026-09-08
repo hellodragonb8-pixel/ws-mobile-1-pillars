@@ -92,6 +92,8 @@
      under a soft, uniform scrim that scales with how far back it's
      receded (--d) — not a per-card brightness value to hand-tune. */
   --card-dim-max: 0.035;
+
+  --type-title-ls: -0.02em;
 }
 
 /* Elevation model (Material "key + ambient shadow", scaled by how much
