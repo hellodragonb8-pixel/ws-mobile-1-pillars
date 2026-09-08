@@ -34,7 +34,7 @@
   /* Apple small-breakpoint type ramp */
   --type-title-size: 24px;       /* headline-reduced at the xsmall step */
   --type-title-lh: 1.16667;
-  --type-title-ls: 0.009em;
+  --type-title-ls: -0.01em;
   --type-body-size: 15px;        /* paragraph + links (was 17px typography-body) */
   --type-body-lh: 1.46667;       /* 22px at 15px */
   --type-body-ls: -0.016em;
