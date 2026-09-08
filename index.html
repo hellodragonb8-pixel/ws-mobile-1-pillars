@@ -45,7 +45,7 @@
 
             <article class="pillar-card" id="pillar-1">
               <figure class="pillar-card__media">
-                <img src="assets/pillar-screenshot.png" alt="VS Code editor with the Explorer, an open TypeScript file, and the agent Sessions panel ready to start a session." loading="eager">
+                <img src="assets/pillar-screenshot.png" data-src-dark="assets/pillar-screenshot.png" data-src-light="assets/pillar-screenshot-light.svg" alt="VS Code editor with the Explorer, an open TypeScript file, and the agent Sessions panel ready to start a session." loading="eager">
               </figure>
               <div class="pillar-card__body">
                 <h2 class="pillar-card__title">Decide how work gets done</h2>
@@ -63,7 +63,7 @@
 
             <article class="pillar-card" id="pillar-2">
               <figure class="pillar-card__media">
-                <img src="assets/pillar-screenshot.png" alt="VS Code editor with the Explorer, an open TypeScript file, and the agent Sessions panel ready to start a session." loading="lazy">
+                <img src="assets/pillar-screenshot.png" data-src-dark="assets/pillar-screenshot.png" data-src-light="assets/pillar-screenshot-light.svg" alt="VS Code editor with the Explorer, an open TypeScript file, and the agent Sessions panel ready to start a session." loading="lazy">
               </figure>
               <div class="pillar-card__body">
                 <h2 class="pillar-card__title">Scale what works</h2>
@@ -81,7 +81,7 @@
 
             <article class="pillar-card" id="pillar-3">
               <figure class="pillar-card__media">
-                <img src="assets/pillar-screenshot.png" alt="VS Code editor with the Explorer, an open TypeScript file, and the agent Sessions panel ready to start a session." loading="lazy">
+                <img src="assets/pillar-screenshot.png" data-src-dark="assets/pillar-screenshot.png" data-src-light="assets/pillar-screenshot-light.svg" alt="VS Code editor with the Explorer, an open TypeScript file, and the agent Sessions panel ready to start a session." loading="lazy">
               </figure>
               <div class="pillar-card__body">
                 <h2 class="pillar-card__title">Build the system, not the solution</h2>
@@ -111,6 +111,7 @@
   <!-- Developer toolbar (not part of the design) -->
   <div class="dev-toolbar" aria-label="Prototype controls">
     <a class="dev-btn" href="stack.html">Variant B: sticky stack</a>
+    <button id="toggleThemeBtn" class="dev-btn" aria-pressed="false">Theme: Dark</button>
     <button id="toggleGridBtn" class="dev-btn" aria-pressed="false">4-col grid</button>
     <button id="toggleSnapBtn" class="dev-btn" aria-pressed="false">Proximity snap</button>
     <button id="toggleMotionBtn" class="dev-btn" aria-pressed="false">Simulate reduced motion</button>

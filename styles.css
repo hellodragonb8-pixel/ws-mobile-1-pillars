@@ -18,6 +18,10 @@
   --bg-color: #0b0c0e;
   --card-bg: rgba(255, 255, 255, 0.04);
   --card-border: rgba(255, 255, 255, 0.10);
+  --header-bg: rgba(11, 12, 14, 0.85);
+  --header-border: rgba(255, 255, 255, 0.06);
+  --media-bg: #0e1013;
+  --media-border: rgba(255, 255, 255, 0.06);
 
   --text-primary: #f5f5f7;
   --text-secondary: #b8bcc6;
@@ -55,6 +59,27 @@
   --media-scale-rest: 0.84;
   --media-opacity-rest: 0.35;
   --media-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ------------------------------------------------------------------
+   Light theme (VS Code Light Modern, 2026) — scoped to the frame so
+   the dev canvas/toolbar stay on the constant dark chrome.
+------------------------------------------------------------------ */
+
+.device-frame[data-theme="light"] {
+  --bg-color: #f3f3f3;
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.10);
+  --header-bg: rgba(255, 255, 255, 0.85);
+  --header-border: rgba(0, 0, 0, 0.06);
+  --media-bg: #ececec;
+  --media-border: rgba(0, 0, 0, 0.08);
+
+  --text-primary: #1f1f1f;
+  --text-secondary: #45474a;
+  --text-muted: #6f6f6f;
+  --accent-blue: #005fb8;
+  --accent-blue-light: #005fb8;
 }
 
 * {
@@ -142,8 +167,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(11, 12, 14, 0.85);
+  border-bottom: 1px solid var(--header-border);
+  background: var(--header-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   position: sticky;
@@ -248,8 +273,8 @@ body {
   width: 100%;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: #0e1013;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--media-bg);
+  border-bottom: 1px solid var(--media-border);
 }
 
 .pillar-card__media img {

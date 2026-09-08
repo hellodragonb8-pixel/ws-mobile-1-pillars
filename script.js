@@ -7,8 +7,40 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggleSnapBtn = document.getElementById('toggleSnapBtn');
   const toggleMotionBtn = document.getElementById('toggleMotionBtn');
   const forceMotionBtn = document.getElementById('forceMotionBtn');
+  const toggleThemeBtn = document.getElementById('toggleThemeBtn');
   const gridOverlay = document.getElementById('gridOverlay');
   const engineStatus = document.getElementById('engineStatus');
+
+  /* ----------------------------------------------------------------
+     Theme: dark (default) / VS Code Light Modern. Persisted per
+     prototype so a reload keeps your last choice.
+  ---------------------------------------------------------------- */
+
+  const THEME_KEY = 'vscode-mobile-theme';
+  const cardImages = Array.from(document.querySelectorAll('.pillar-card__media img'));
+  let theme = localStorage.getItem(THEME_KEY) || 'dark';
+
+  function applyTheme() {
+    frame.setAttribute('data-theme', theme);
+    cardImages.forEach(img => {
+      const next = theme === 'light' ? img.dataset.srcLight : img.dataset.srcDark;
+      if (next && img.getAttribute('src') !== next) img.setAttribute('src', next);
+    });
+    if (toggleThemeBtn) {
+      setPressed(toggleThemeBtn, theme === 'light');
+      toggleThemeBtn.textContent = theme === 'light' ? 'Theme: Light' : 'Theme: Dark';
+    }
+  }
+
+  if (toggleThemeBtn) {
+    toggleThemeBtn.addEventListener('click', () => {
+      theme = theme === 'light' ? 'dark' : 'light';
+      localStorage.setItem(THEME_KEY, theme);
+      applyTheme();
+    });
+  }
+
+  applyTheme();
 
   const supportsViewTimeline = CSS.supports('animation-timeline: view()');
   const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
