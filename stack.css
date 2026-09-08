@@ -56,7 +56,7 @@
   /* Motion ranges */
   --media-scale-in: 0.9;        /* image scale when card first enters */
   --card-scale-back: 0.045;     /* shrink per level of stacking depth */
-  --card-dim-max: 0.5;          /* overlay opacity when fully covered */
+  --card-dim-max: 0.35;         /* overlay opacity when fully covered — capped so the covered card's exposed title still clears 7:1 (AAA) against --card-bg */
 
   /* Sheen gradation: card 1 (--i:0) brightest, fading per card after it */
   --sheen-base: 0.02;
@@ -130,12 +130,6 @@
    card (--d:2) gets the full scrim, a mid card (--d:1) gets half. */
 .device-frame[data-theme="light"] .scd-01__card::after {
   opacity: calc(var(--card-dim-max) * min(var(--d, 0), 2) / 2);
-}
-
-/* Nudge card 2 up a couple px so it fully overlaps card 1's image edge
-   instead of leaving a sliver of it visible above card 2's header band. */
-.device-frame[data-theme="light"] #card-2 {
-  --stack-offset: calc(var(--band-two-line) - 2px);
 }
 
 * {
